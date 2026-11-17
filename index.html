@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mô Phỏng Thuật Toán Trộn Hai Mảng — DT023</title>
+    <style>
+        :root {
+            --primary: #0284c7;
+            --primary-dark: #0369a1;
+            --success: #16a34a;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --accent-a: #3b82f6;
+            --accent-b: #ec4899;
+            --accent-c: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            padding: 28px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.2);
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(14, 165, 233, 0.2);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        header h1 {
+            font-size: 26px;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+
+        header p {
+            color: #cbd5e1;
+            font-size: 15px;
+        }
+
+        .student-info {
+            margin-top: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+        }
+
+        .info-pill {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 6px 14px;
+            border-radius: 8px;
+        }
+
+        /* Card styles */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Controls */
+        .presets {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            cursor: pointer;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--text);
+            transition: all 0.15s ease;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .btn-preset {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+        .btn-preset.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+            border-color: var(--warning);
+        }
+
+        .grid-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-inputs { grid-template-columns: 1fr; }
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+        .label-a { color: var(--accent-a); }
+        .label-b { color: var(--accent-b); }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: monospace;
+        }
+        input[type="text"]:focus {
+            outline: 2px solid var(--primary);
+            border-color: transparent;
+        }
+
+        .action-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Visualization Area */
+        .vis-area {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            margin: 20px 0;
+        }
+
+        .array-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .array-name {
+            font-weight: 700;
+            font-size: 16px;
+            width: 80px;
+        }
+
+        .array-cells {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .cell-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .cell {
+            width: 48px;
+            height: 48px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            font-weight: 600;
+            background: white;
+            transition: all 0.25s ease;
+        }
+
+        .cell-idx {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .cell-pointer {
+            font-size: 12px;
+            font-weight: 700;
+            position: absolute;
+            top: -22px;
+            animation: bounce 0.6s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-4px); }
+        }
+
+        .pointer-a { color: var(--accent-a); }
+        .pointer-b { color: var(--accent-b); }
+
+        .cell.active-a {
+            background: #dbeafe;
+            border-color: var(--accent-a);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+        .cell.active-b {
+            background: #fce7f3;
+            border-color: var(--accent-b);
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.25);
+        }
+        .cell.done {
+            background: #f1f5f9;
+            color: #94a3b8;
+            border-style: dashed;
+        }
+        .cell.newly-added {
+            background: #dcfce7;
+            border-color: var(--accent-c);
+            color: #166534;
+            transform: scale(1.08);
+        }
+
+        /* Status box */
+        .status-box {
+            background: #f8fafc;
+            border-left: 4px solid var(--primary);
+            padding: 14px 18px;
+            border-radius: 6px;
+            margin: 16px 0;
+            font-size: 15px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .stat-item {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 12px 16px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-val {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* Table */
+        .table-responsive {
+            overflow-x: auto;
+            max-height: 380px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: #f8fafc;
+            color: var(--text-muted);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .tag-win {
+            background: #dcfce7;
+            color: #15803d;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+        .tag-tail {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        footer {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+            padding: 24px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <header>
+        <span class="badge">HỌC VIỆN CÔNG NGHỆ BƯU CHÍNH VIỄN THÔNG — INT13185</span>
+        <h1>ĐỒ ÁN DT023: TRỘN HAI MẢNG ĐÃ SẮP TRONG THỜI GIAN TUYẾN TÍNH O(n + m)</h1>
+        <p>Mô phỏng trực quan kỹ thuật hai con trỏ (Two-Pointers Algorithm) & Lần vết từng bước theo chuẩn đề bài</p>
+        
+        <div class="student-info">
+            <div class="info-pill"><strong>Sinh viên:</strong> Nguyễn Ngọc Hoan</div>
+            <div class="info-pill"><strong>MSSV:</strong> N24DCDT026</div>
+            <div class="info-pill"><strong>Lớp:</strong> D24CQDT01-N</div>
+            <div class="info-pill"><strong>GVHD:</strong> ThS. Hồ Nhựt Minh</div>
+            <div class="info-pill"><strong>Mã đề:</strong> DT023</div>
+        </div>
+    </header>
+
+    <!-- Controls Card -->
+    <div class="card">
+        <div class="card-title">⚙️ Bộ Dữ Liệu & Điều Khiển Mô Phỏng</div>
+        
+        <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 8px;">CHỌN NHANH DỮ LIỆU MẪU THEO PHIẾU GIAO ĐỀ TÀI:</label>
+        <div class="presets">
+            <button class="btn-preset active" onclick="loadPreset(0)">VD01 (Phiếu: Trùng khóa 3)</button>
+            <button class="btn-preset" onclick="loadPreset(1)">VD02 (Phiếu: Mảng a rỗng)</button>
+            <button class="btn-preset" onclick="loadPreset(2)">TK01 (Xen kẽ cực đại)</button>
+            <button class="btn-preset" onclick="loadPreset(3)">TK02 (b nhỏ hơn hẳn a)</button>
+            <button class="btn-preset" onclick="loadPreset(4)">BIEN01 (Hai mảng rỗng)</button>
+            <button class="btn-preset" onclick="loadPreset(5)">BIEN02 (Bảo toàn 3 số 1)</button>
+            <button class="btn-preset" onclick="loadPreset(6)">BIEN03 (Số âm & 0)</button>
+            <button class="btn-preset" onclick="loadPreset(7)">Ngẫu nhiên</button>
+        </div>
+
+        <div class="grid-inputs">
+            <div class="input-group">
+                <label class="label-a">Mảng a (đã sắp tăng dần, cách nhau bởi dấu cách):</label>
+                <input type="text" id="inputA" value="1 3 5" placeholder="Ví dụ: 1 3 5">
+            </div>
+            <div class="input-group">
+                <label class="label-b">Mảng b (đã sắp tăng dần, cách nhau bởi dấu cách):</label>
+                <input type="text" id="inputB" value="2 3 6" placeholder="Ví dụ: 2 3 6">
+            </div>
+        </div>
+
+        <div class="action-bar">
+            <button class="btn-primary" id="btnRun" onclick="runAuto()">▶ Tự Động Chạy</button>
+            <button class="btn-success" id="btnStep" onclick="runStep()">⏯ Chạy Từng Bước</button>
+            <button onclick="resetState()">🔄 Đặt Lại</button>
+            <div style="margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 14px;">
+                <label for="speedRange">Tốc độ:</label>
+                <input type="range" id="speedRange" min="200" max="1500" value="700" step="100">
+            </div>
+        </div>
+    </div>
+
+    <!-- Visual Area Card -->
+    <div class="card">
+        <div class="card-title">👁️ Trực Quan Hóa Con Trỏ (Two-Pointers Visualizer)</div>
+
+        <div class="vis-area">
+            <!-- Array A -->
+            <div class="array-row">
+                <div class="array-name" style="color: var(--accent-a);">Mảng a:</div>
+                <div class="array-cells" id="cellsA"></div>
+            </div>
+
+            <!-- Array B -->
+            <div class="array-row">
+                <div class="array-name" style="color: var(--accent-b);">Mảng b:</div>
+                <div class="array-cells" id="cellsB"></div>
+            </div>
+
+            <!-- Array C -->
+            <div class="array-row" style="padding-top: 12px; border-top: 1px dashed var(--border);">
+                <div class="array-name" style="color: var(--accent-c);">Mảng c:</div>
+                <div class="array-cells" id="cellsC"></div>
+            </div>
+        </div>
+
+        <!-- Status & Stats -->
+        <div class="status-box" id="statusMessage">
+            Sẵn sàng mô phỏng. Bấm <strong>"Tự Động Chạy"</strong> hoặc <strong>"Chạy Từng Bước"</strong> để bắt đầu.
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-val" id="statCmp">0</div>
+                <div class="stat-label">Số phép so sánh thực tế</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-val" id="statBound">0 .. 0</div>
+                <div class="stat-label">Chặn lý thuyết [min, n+m-1]</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-val" id="statLen">0</div>
+                <div class="stat-label">Tổng độ dài (n + m)</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-val" style="color: var(--success);">O(n + m)</div>
+                <div class="stat-label">Độ phức tạp thời gian</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trace Table Card -->
+    <div class="card">
+        <div class="card-title">📋 Bảng Lần Vết Từng Bước (Khớp Bảng 3.3 Trong Báo Cáo)</div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 70px;">Bước</th>
+                        <th style="width: 60px;">i</th>
+                        <th style="width: 60px;">j</th>
+                        <th>Phép so sánh</th>
+                        <th>Phần tử chọn</th>
+                        <th>Mảng c hiện tại</th>
+                    </tr>
+                </thead>
+                <tbody id="traceTableBody">
+                    <tr>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>Khởi tạo</td>
+                        <td>-</td>
+                        <td>[]</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        Học viện Công nghệ Bưu chính Viễn thông · Cơ sở tại TP. Hồ Chí Minh<br>
+        Bản quyền & Phát triển bởi sinh viên: <strong>Nguyễn Ngọc Hoan (N24DCDT026)</strong> — Đề tài DT023
+    </footer>
+</div>
+
+<script>
+    const presets = [
+        { name: "VD01", a: [1, 3, 5], b: [2, 3, 6] },
+        { name: "VD02", a: [], b: [-2, 0] },
+        { name: "TK01", a: [1, 3, 5, 7], b: [2, 4, 6, 8] },
+        { name: "TK02", a: [10, 20, 30], b: [1, 2, 3] },
+        { name: "BIEN01", a: [], b: [] },
+        { name: "BIEN02", a: [1, 1], b: [1] },
+        { name: "BIEN03", a: [-10, -5, 0], b: [-8, 2, 5] },
+        { name: "RANDOM", a: [], b: [] }
+    ];
+
+    let arrA = [];
+    let arrB = [];
+    let arrC = [];
+    let ptrI = 0;
+    let ptrJ = 0;
+    let comparisons = 0;
+    let stepCount = 0;
+    let isFinished = false;
+    let autoTimer = null;
+
+    function parseInputs() {
+        const strA = document.getElementById('inputA').value.trim();
+        const strB = document.getElementById('inputB').value.trim();
+        arrA = strA ? strA.split(/\s+/).map(Number).filter(x => !isNaN(x)) : [];
+        arrB = strB ? strB.split(/\s+/).map(Number).filter(x => !isNaN(x)) : [];
+    }
+
+    function loadPreset(idx) {
+        document.querySelectorAll('.btn-preset').forEach((btn, i) => {
+            btn.classList.toggle('active', i === idx);
+        });
+
+        if (idx === 7) {
+            // Random
+            const lenA = Math.floor(Math.random() * 5) + 3;
+            const lenB = Math.floor(Math.random() * 5) + 3;
+            let curA = Math.floor(Math.random() * 5);
+            let curB = Math.floor(Math.random() * 5);
+            const a = [];
+            const b = [];
+            for (let i = 0; i < lenA; i++) { a.push(curA); curA += Math.floor(Math.random() * 4) + 1; }
+            for (let i = 0; i < lenB; i++) { b.push(curB); curB += Math.floor(Math.random() * 4) + 1; }
+            document.getElementById('inputA').value = a.join(' ');
+            document.getElementById('inputB').value = b.join(' ');
+        } else {
+            document.getElementById('inputA').value = presets[idx].a.join(' ');
+            document.getElementById('inputB').value = presets[idx].b.join(' ');
+        }
+
+        resetState();
+    }
+
+    function resetState() {
+        clearInterval(autoTimer);
+        autoTimer = null;
+        document.getElementById('btnRun').textContent = "▶ Tự Động Chạy";
+
+        parseInputs();
+        arrC = [];
+        ptrI = 0;
+        ptrJ = 0;
+        comparisons = 0;
+        stepCount = 0;
+        isFinished = false;
+
+        const minB = Math.min(arrA.length, arrB.length);
+        const maxB = (arrA.length + arrB.length > 0) ? (arrA.length + arrB.length - 1) : 0;
+        document.getElementById('statBound').textContent = `${minB} .. ${maxB}`;
+        document.getElementById('statLen').textContent = arrA.length + arrB.length;
+        document.getElementById('statCmp').textContent = 0;
+        document.getElementById('statusMessage').innerHTML = `Khởi tạo: Mảng a có ${arrA.length} phần tử, mảng b có ${arrB.length} phần tử. Con trỏ i=0, j=0.`;
+
+        // Render table row 0
+        const tbody = document.getElementById('traceTableBody');
+        tbody.innerHTML = `
+            <tr>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>Khởi tạo hai chỉ số</td>
+                <td>-</td>
+                <td>[]</td>
+            </tr>
+        `;
+
+        renderVisual();
+    }
+
+    function renderVisual(newAddedVal = null) {
+        // Cells A
+        const containerA = document.getElementById('cellsA');
+        containerA.innerHTML = '';
+        if (arrA.length === 0) {
+            containerA.innerHTML = '<span style="color:#94a3b8; font-style:italic;">(Rỗng)</span>';
+        } else {
+            arrA.forEach((val, idx) => {
+                const wrap = document.createElement('div');
+                wrap.className = 'cell-wrapper';
+                if (idx === ptrI && ptrI < arrA.length) {
+                    wrap.innerHTML += '<div class="cell-pointer pointer-a">i ▼</div>';
+                }
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                if (idx < ptrI) cell.classList.add('done');
+                if (idx === ptrI && ptrI < arrA.length) cell.classList.add('active-a');
+                cell.textContent = val;
+                wrap.appendChild(cell);
+                wrap.innerHTML += `<div class="cell-idx">[${idx}]</div>`;
+                containerA.appendChild(wrap);
+            });
+        }
+
+        // Cells B
+        const containerB = document.getElementById('cellsB');
+        containerB.innerHTML = '';
+        if (arrB.length === 0) {
+            containerB.innerHTML = '<span style="color:#94a3b8; font-style:italic;">(Rỗng)</span>';
+        } else {
+            arrB.forEach((val, idx) => {
+                const wrap = document.createElement('div');
+                wrap.className = 'cell-wrapper';
+                if (idx === ptrJ && ptrJ < arrB.length) {
+                    wrap.innerHTML += '<div class="cell-pointer pointer-b">j ▼</div>';
+                }
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                if (idx < ptrJ) cell.classList.add('done');
+                if (idx === ptrJ && ptrJ < arrB.length) cell.classList.add('active-b');
+                cell.textContent = val;
+                wrap.appendChild(cell);
+                wrap.innerHTML += `<div class="cell-idx">[${idx}]</div>`;
+                containerB.appendChild(wrap);
+            });
+        }
+
+        // Cells C
+        const containerC = document.getElementById('cellsC');
+        containerC.innerHTML = '';
+        if (arrC.length === 0) {
+            containerC.innerHTML = '<span style="color:#94a3b8; font-style:italic;">(Đang đợi trộn...)</span>';
+        } else {
+            arrC.forEach((val, idx) => {
+                const wrap = document.createElement('div');
+                wrap.className = 'cell-wrapper';
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                if (idx === arrC.length - 1 && newAddedVal !== null) {
+                    cell.classList.add('newly-added');
+                }
+                cell.textContent = val;
+                wrap.appendChild(cell);
+                wrap.innerHTML += `<div class="cell-idx">[${idx}]</div>`;
+                containerC.appendChild(wrap);
+            });
+        }
+
+        document.getElementById('statCmp').textContent = comparisons;
+    }
+
+    function runStep() {
+        if (isFinished) return;
+
+        stepCount++;
+        let action = "";
+        let choice = "";
+        let comparisonStr = "";
+        let chosenVal = 0;
+
+        if (ptrI < arrA.length && ptrJ < arrB.length) {
+            // Phase 1: Two pointers compare
+            comparisons++;
+            const valA = arrA[ptrI];
+            const valB = arrB[ptrJ];
+            comparisonStr = `a[${ptrI}]=${valA} <= b[${ptrJ}]=${valB}`;
+
+            if (valA <= valB) {
+                chosenVal = valA;
+                arrC.push(chosenVal);
+                choice = `<span class="tag-win">a[${ptrI}]=${valA}</span>`;
+                action = `So sánh a[${ptrI}]=${valA} &le; b[${ptrJ}]=${valB} (ĐÚNG) &rarr; Đưa <strong>${valA}</strong> từ mảng a vào c, tăng i.`;
+                ptrI++;
+            } else {
+                chosenVal = valB;
+                arrC.push(chosenVal);
+                choice = `<span class="tag-win">b[${ptrJ}]=${valB}</span>`;
+                action = `So sánh a[${ptrI}]=${valA} &le; b[${ptrJ}]=${valB} (SAI) &rarr; Đưa <strong>${valB}</strong> từ mảng b vào c, tăng j.`;
+                ptrJ++;
+            }
+        } else if (ptrI < arrA.length) {
+            // Phase 2: Copy tail a
+            chosenVal = arrA[ptrI];
+            arrC.push(chosenVal);
+            comparisonStr = "b đã cạn";
+            choice = `<span class="tag-tail">a[${ptrI}]=${chosenVal} (đuôi)</span>`;
+            action = `Mảng b đã cạn hết &rarr; Sao chép phần tử đuôi <strong>${chosenVal}</strong> từ a vào c, tăng i.`;
+            ptrI++;
+        } else if (ptrJ < arrB.length) {
+            // Phase 3: Copy tail b
+            chosenVal = arrB[ptrJ];
+            arrC.push(chosenVal);
+            comparisonStr = "a đã cạn";
+            choice = `<span class="tag-tail">b[${ptrJ}]=${chosenVal} (đuôi)</span>`;
+            action = `Mảng a đã cạn hết &rarr; Sao chép phần tử đuôi <strong>${chosenVal}</strong> từ b vào c, tăng j.`;
+            ptrJ++;
+        }
+
+        // Update status
+        document.getElementById('statusMessage').innerHTML = action;
+
+        // Append to trace table
+        const tbody = document.getElementById('traceTableBody');
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td><strong>${stepCount}</strong></td>
+            <td>${ptrI}</td>
+            <td>${ptrJ}</td>
+            <td>${comparisonStr}</td>
+            <td>${choice}</td>
+            <td>[${arrC.join(', ')}]</td>
+        `;
+        tbody.appendChild(row);
+        row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        renderVisual(chosenVal);
+
+        // Check if finished
+        if (ptrI >= arrA.length && ptrJ >= arrB.length) {
+            isFinished = true;
+            clearInterval(autoTimer);
+            autoTimer = null;
+            document.getElementById('btnRun').textContent = "▶ Tự Động Chạy";
+            document.getElementById('statusMessage').innerHTML = `🎉 <strong>HOÀN TẤT THUẬT TOÁN!</strong> Mảng c đã có đủ ${arrC.length} phần tử tăng không giảm. Tổng số phép so sánh thực hiện: <strong>${comparisons}</strong>.`;
+        }
+    }
+
+    function runAuto() {
+        if (isFinished) {
+            resetState();
+        }
+
+        if (autoTimer) {
+            clearInterval(autoTimer);
+            autoTimer = null;
+            document.getElementById('btnRun').textContent = "▶ Tiếp Tục";
+            return;
+        }
+
+        document.getElementById('btnRun').textContent = "⏸ Tạm Dừng";
+        const speed = 1700 - Number(document.getElementById('speedRange').value);
+        autoTimer = setInterval(() => {
+            if (!isFinished) {
+                runStep();
+            } else {
+                clearInterval(autoTimer);
+                autoTimer = null;
+                document.getElementById('btnRun').textContent = "▶ Chạy Lại";
+            }
+        }, speed);
+    }
+
+    // Init
+    window.onload = () => {
+        loadPreset(0);
+    };
+</script>
+
+</body>
+</html>
